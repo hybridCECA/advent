@@ -8,8 +8,17 @@
 #include <optional>
 #include <cassert>
 
+typedef std::string (*AdventFunction)(std::vector<std::string>);
+
 template <typename T> int sign(T val) {
     return (T(0) < val) - (val < T(0));
+}
+
+template <typename K, typename V>
+const bool has(const  std::map <K,V> & m, const K & key) {
+   typename std::map<K,V>::const_iterator it = m.find( key );
+
+   return it != m.end();
 }
 
 template <typename K, typename V>
@@ -155,20 +164,18 @@ int main(int argc, char** argv) {
     lines.push_back(line);
   }
 
+  std::map<int, AdventFunction> functions = {
+    {1, &advent1},
+    {2, &advent2},
+  };
+
   int day = std::stoi(dayStr);
-  std::string output;
-  switch (day) {
-    case 1:
-      output = advent1(lines);
-      break;
-    case 2:
-      output = advent2(lines);
-      break;
-    default:
-      std::cerr << "Not a valid advent day" << std::endl;
-      return 1;
+  if (!has(functions, day)) {
+    std::cerr << "Not a valid advent day" << std::endl;
+    return 1;
   }
 
+  std::string output = functions[day](lines);
   std::cout << "Result: " << output << std::endl;
 
   return 0;
